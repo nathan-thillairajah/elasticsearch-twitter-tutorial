@@ -1,10 +1,15 @@
+import sys
 from elasticsearch import Elasticsearch
 es = Elasticsearch()
+
+query = "virginia"
+if len(sys.argv) == 2:
+    query = sys.argv[1]
 
 body = {
 	"query": {
 		"match": {
-			"message": "virginia"
+			"message": query
 		}
 	}
 }

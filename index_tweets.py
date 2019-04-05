@@ -1,3 +1,4 @@
+import sys
 import json
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
@@ -40,10 +41,14 @@ class TweetStreamListener(StreamListener):
         print(status)
 
 if __name__ == '__main__':
+    filterText = 'final four'
+    if len(sys.argv) == 2:
+        filterText = sys.argv[1]
+
     listener = TweetStreamListener()
 
     auth = OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_token_secret)
 
     stream = Stream(auth, listener)
-    stream.filter(track=['final four'])
+    stream.filter(track=[filterText])
