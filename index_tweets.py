@@ -10,6 +10,8 @@ from config import *
 es = Elasticsearch()
 
 class TweetStreamListener(StreamListener):
+    def __init__(self, tweetFilter):
+        self.tweetFilter = tweetFilter
 
     def on_data(self, data):
         dict_data = json.loads(data)
@@ -34,21 +36,22 @@ class TweetStreamListener(StreamListener):
                        "message": dict_data["text"],
                        "polarity": tweet.sentiment.polarity,
                        "subjectivity": tweet.sentiment.subjectivity,
-                       "sentiment": sentiment})
+                       "sentiment": sentiment,
+                       "filter": self.tweetFilter})
         return True
 
     def on_error(self, status):
         print(status)
 
 if __name__ == '__main__':
-    filterText = 'final four'
+    tweetFilter = 'final four'
     if len(sys.argv) == 2:
-        filterText = sys.argv[1]
+        tweetFilter = sys.argv[1]
 
-    listener = TweetStreamListener()
+    listener = TweetStreamListener(tweetFilter)
 
     auth = OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_token_secret)
 
     stream = Stream(auth, listener)
-    stream.filter(track=[filterText])
+    stream.filter(track=[tweetFilter])
